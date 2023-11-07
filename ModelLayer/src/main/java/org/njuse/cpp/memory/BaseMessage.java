@@ -1,15 +1,12 @@
 package org.njuse.cpp.memory;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.util.Map;
 
 
 public abstract class BaseMessage {
-    String content;
+    private final String content;
 
-    Map<String,Object> extendParams;
+    private final Map<String,Object> extendParams;
 
     public BaseMessage(String content,Map<String,Object> extendParams){
         this.content=content;
@@ -17,6 +14,18 @@ public abstract class BaseMessage {
     }
 
 
-    abstract String type();
+    public abstract String type();
+
+    public String getContent(){
+        return this.content;
+    }
+
+    public Map<String,Object> getExtendParams(){
+        return this.extendParams;
+    }
+
+    public Object getExtendParam(String key){
+        return this.extendParams.get(key);
+    }
 
 }

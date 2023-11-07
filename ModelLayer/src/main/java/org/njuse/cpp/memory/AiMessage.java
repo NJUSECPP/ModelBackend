@@ -8,7 +8,7 @@ public class AiMessage extends BaseMessage{
     }
 
     @Override
-    String type() {
+    public String type() {
         return "ai";
     }
 }

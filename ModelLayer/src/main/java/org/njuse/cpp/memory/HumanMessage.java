@@ -11,7 +11,7 @@ public class HumanMessage extends BaseMessage {
         super(content,extendParams);
     }
     @Override
-    String type() {
+    public String type() {
         return "human";
     }
 }

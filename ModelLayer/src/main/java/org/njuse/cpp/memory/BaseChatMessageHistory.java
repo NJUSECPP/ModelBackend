@@ -13,9 +13,9 @@ public abstract class BaseChatMessageHistory {
         this.addMessage(aiMessage);
     }
 
-    abstract void clear();
+    public abstract void clear();
 
-    abstract List<BaseMessage> loadMessages();
+    public abstract List<BaseMessage> loadMessages();
 
-    abstract void addMessage(BaseMessage message);
+    public abstract void addMessage(BaseMessage message);
 }
