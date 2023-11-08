@@ -1,11 +1,12 @@
 package org.njuse.cpp.controller;
 
 
+import org.njuse.cpp.bo.QuestionBO;
 import org.njuse.cpp.executor.DefaultExecutor;
 import org.njuse.cpp.memory.BaseChatMessageHistory;
 import org.njuse.cpp.memory.BaseMessage;
-import org.njuse.cpp.memory.SystemMessage;
 import org.njuse.cpp.request.GenerateRequest;
+import org.njuse.cpp.service.QuestionService;
 import org.njuse.cpp.service.SqlMemory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,9 @@ public class ChatController {
     @Autowired
     SqlMemory sqlMemory;
 
+    @Autowired
+    QuestionService questionService;
+
     @PostMapping("/runWithOJ")
     public SseEmitter runWithOJ(@RequestBody GenerateRequest request) {
         //TODO::前置校验
@@ -32,7 +36,7 @@ public class ChatController {
         SseEmitter emitter = new SseEmitter(-1L);
         AtomicInteger index = new AtomicInteger(1);
 
-        Disposable disposable = send(sqlMemory, request.getQuestion()).doOnEach(baseMessageSignal -> {
+        Disposable disposable = send(sqlMemory, request.getQuestionId(),request.getModelName()).doOnEach(baseMessageSignal -> {
                     BaseMessage message = baseMessageSignal.get();
                     Map<String, Object> payload = new HashMap<>();
                     if (message.type().equals("system")) {
@@ -78,12 +82,14 @@ public class ChatController {
         return emitter;
     }
 
-    private Flux<BaseMessage> send(BaseChatMessageHistory memory, String question) {
+    private Flux<BaseMessage> send(BaseChatMessageHistory memory, Integer questionId,String modelName) {
         DefaultExecutor defaultExecutor = new DefaultExecutor();
         return Flux.create(emit -> {
             Map<String, Object> input = new HashMap<>();
             input.put("emit", emit);
-            input.put("question", question);
+            QuestionBO questionBO=questionService.getQuestionById(questionId);
+            input.put("question", questionBO);
+            input.put("modelName",modelName);
             input.put("memory", memory);
             defaultExecutor.run(input);
         });

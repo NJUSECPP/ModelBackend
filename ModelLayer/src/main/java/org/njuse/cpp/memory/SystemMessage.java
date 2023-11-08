@@ -7,7 +7,6 @@ public class SystemMessage extends BaseMessage{
         super(content, extendParams);
     }
 
-
     @Override
     public String type() {
         return "system";
