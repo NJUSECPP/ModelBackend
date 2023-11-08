@@ -10,6 +10,8 @@ public class DefaultExecutor extends BaseExecutor{
 
     @Override
     public void run(Map<String, Object> extendParams) {
-        
+        BaseChatMessageHistory memory= (BaseChatMessageHistory) extendParams.getOrDefault("memory",null);
+
+
     }
 }

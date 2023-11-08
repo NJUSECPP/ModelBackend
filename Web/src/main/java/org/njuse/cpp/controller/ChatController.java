@@ -42,6 +42,20 @@ public class ChatController {
                         payload.put("text", message.getContent());
                         payload.put("offset", 0);
                     }
+                    else if(message.type().equals("human")){
+                        payload.put("index", index.getAndIncrement());
+                        payload.put("type", 0);
+                        payload.put("result", -1);
+                        payload.put("text", message.getContent());
+                        payload.put("offset", 0);
+                    }
+                    else {
+                        payload.put("index", index.getAndIncrement());
+                        payload.put("type", 1);
+                        payload.put("result", -1);
+                        payload.put("text", message.getContent());
+                        payload.put("offset", 0);
+                    }
 
                     try {
                         emitter.send(payload);

@@ -3,7 +3,7 @@ package org.njuse.cpp.dao.po;
 import lombok.Data;
 
 @Data
-public class ChatSessionPO  {
+public class ChatSessionPO {
     private Long id;
     private String sessionId;
     private String type;

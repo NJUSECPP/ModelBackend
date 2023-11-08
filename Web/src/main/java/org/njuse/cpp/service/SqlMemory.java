@@ -1,6 +1,5 @@
 package org.njuse.cpp.service;
 
-import lombok.NoArgsConstructor;
 import org.njuse.cpp.dao.ChatSessionMapper;
 import org.njuse.cpp.dao.po.ChatSessionPO;
 import org.njuse.cpp.memory.AiMessage;
