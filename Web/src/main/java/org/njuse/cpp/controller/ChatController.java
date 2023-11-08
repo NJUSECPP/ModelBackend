@@ -67,14 +67,7 @@ public class ChatController {
                         throw new RuntimeException(e);
                     }
                 }
-        ).doOnComplete(() -> {
-            try {
-                emitter.send("[DONE]");
-            } catch (IOException e) {
-                emitter.completeWithError(e);
-            }
-            emitter.complete();
-        }).doOnError(emitter::completeWithError).subscribe();
+        ).doOnComplete(emitter::complete).doOnError(emitter::completeWithError).subscribe();
 
         emitter.onTimeout(disposable::dispose);
         emitter.onCompletion(disposable::dispose);
@@ -91,6 +84,7 @@ public class ChatController {
             input.put("question", questionBO);
             input.put("modelName",modelName);
             input.put("memory", memory);
+
             defaultExecutor.run(input);
         });
     }
