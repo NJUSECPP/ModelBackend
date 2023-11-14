@@ -11,12 +11,17 @@ public interface ChatSessionMapper {
             "#{type},#{content},#{userName},#{userId})")
     void insertChatMessage(ChatSessionPO chatSession);
 
+    @Results({
+            @Result(property = "sessionId", column = "session_id"),
+            @Result(property = "userName", column = "user_name"),
+            @Result(property = "userId", column = "user_id")
+    }
+    )
     @Select("SELECT * from chat_session where session_id=#{sessionId} order by id ASC")
-    List<ChatSessionPO> getChatMessageBySession(@Param("sessionId")String sessionId);
+    List<ChatSessionPO> getChatMessageBySession(@Param("sessionId") String sessionId);
 
     @Delete("DELETE from chat_session where session_id=#{sessionId}")
     void deleteBySession(String sessionId);
-
 
 
 }

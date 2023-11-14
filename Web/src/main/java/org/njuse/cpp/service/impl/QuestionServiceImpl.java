@@ -1,13 +1,15 @@
 package org.njuse.cpp.service.impl;
 
 import org.njuse.cpp.bo.QuestionBO;
-<<<<<<< HEAD
 import org.njuse.cpp.dao.QuestionMapper;
+import org.njuse.cpp.dao.converter.QuestionConverter;
 import org.njuse.cpp.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+@Component
 public class QuestionServiceImpl implements QuestionService {
     //TODO: 实现根据id获取QuestionBO
 
@@ -21,21 +23,12 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public QuestionBO getQuestionById(Integer questionId){
         Long id=Long.valueOf(questionId);
-        return questionMapper.getQuestionById(id);
+
+
+        return QuestionConverter.po2bo(questionMapper.getQuestionById(id));
     }
-
-
-
-=======
-import org.njuse.cpp.service.QuestionService;
-
-public class QuestionServiceImpl implements QuestionService {
-    //TODO: 实现根据id获取QuestionBO
-    @Override
-    public QuestionBO getQuestionById(Integer questionId) {
-        return null;
-    }
-
-
->>>>>>> ec42ab482970bc4e6c62fc32d8ecde478962f6c2
 }
+
+
+
+

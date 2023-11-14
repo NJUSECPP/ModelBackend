@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-@Scope("request")
+@Scope("prototype")
 public class SqlMemory extends BaseChatMessageHistory {
     private String sessionId;
 

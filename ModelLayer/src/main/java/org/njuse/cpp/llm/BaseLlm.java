@@ -1,4 +1,7 @@
 package org.njuse.cpp.llm;
 
-public class BaseLlm {
+import java.util.Map;
+
+public abstract class BaseLlm {
+    public abstract Map<String,Object> call(String prompt, Map<String,Object> extendedParams);
 }

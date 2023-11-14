@@ -7,5 +7,5 @@ import java.util.Map;
 
 public abstract class BaseExecutor {
 
-    public abstract void run(Map<String,Object> extendParams);
+    public abstract void run(Map<String,Object> args);
 }

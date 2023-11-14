@@ -1,13 +1,18 @@
-package org.njuse.cpp.bo;
+package org.njuse.cpp.dao.po;
 
 import lombok.Data;
 
-@Data
-public class QuestionBO {
+import javax.persistence.Column;
 
+@Data
+public class QuestionPO {
     private Long id;
+
     private String name;
+
     private String description;
+
     private String testCase;
+
     private String answer;
 }

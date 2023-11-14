@@ -5,6 +5,7 @@ import org.njuse.cpp.bo.QuestionBO;
 import org.njuse.cpp.executor.DefaultExecutor;
 import org.njuse.cpp.memory.BaseChatMessageHistory;
 import org.njuse.cpp.memory.BaseMessage;
+import org.njuse.cpp.memory.SystemMessage;
 import org.njuse.cpp.request.GenerateRequest;
 import org.njuse.cpp.service.QuestionService;
 import org.njuse.cpp.service.SqlMemory;
@@ -14,31 +15,47 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 @RequestMapping("/run")
 public class ChatController {
+
     @Autowired
     SqlMemory sqlMemory;
 
     @Autowired
     QuestionService questionService;
 
-    @PostMapping("/runWithOJ")
-    public SseEmitter runWithOJ(@RequestBody GenerateRequest request) {
+    @PostMapping(value="/runWithOJ",produces = "text/event-stream")
+    public SseEmitter runWithOJ(@RequestBody GenerateRequest request, HttpServletResponse response) {
+        response.setHeader("Cache-Control","no-cache");
+        response.setHeader("Connection","keep-alive");
+        response.setHeader("X-Accel-Buffering","no");
+        response.setCharacterEncoding("UTF-8");
         //TODO::前置校验
 
         sqlMemory.init(request.getSessionId(), request.getUserName(), request.getUserId());
         SseEmitter emitter = new SseEmitter(-1L);
         AtomicInteger index = new AtomicInteger(1);
 
-        Disposable disposable = send(sqlMemory, request.getQuestionId(),request.getModelName()).doOnEach(baseMessageSignal -> {
+        Disposable disposable = send(sqlMemory, request.getQuestionId(),request.getModelName())
+                .doOnComplete(emitter::complete)
+                .doOnEach(baseMessageSignal -> {
                     BaseMessage message = baseMessageSignal.get();
+                    if(message==null){
+                        emitter.complete();
+                        return;
+                    }
                     Map<String, Object> payload = new HashMap<>();
+                    System.out.println(message.type());
                     if (message.type().equals("system")) {
                         payload.put("index", index.getAndIncrement());
                         payload.put("type", 2);
@@ -60,14 +77,16 @@ public class ChatController {
                         payload.put("text", message.getContent());
                         payload.put("offset", 0);
                     }
-
                     try {
                         emitter.send(payload);
+//                        if (message.type().equals("system")){
+//                            emitter.complete();
+//                        }
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
-        ).doOnComplete(emitter::complete).doOnError(emitter::completeWithError).subscribe();
+        ).doOnError(emitter::completeWithError).subscribe();
 
         emitter.onTimeout(disposable::dispose);
         emitter.onCompletion(disposable::dispose);
@@ -77,6 +96,7 @@ public class ChatController {
 
     private Flux<BaseMessage> send(BaseChatMessageHistory memory, Integer questionId,String modelName) {
         DefaultExecutor defaultExecutor = new DefaultExecutor();
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         return Flux.create(emit -> {
             Map<String, Object> input = new HashMap<>();
             input.put("emit", emit);
@@ -85,7 +105,9 @@ public class ChatController {
             input.put("modelName",modelName);
             input.put("memory", memory);
 
-            defaultExecutor.run(input);
+            executorService.submit(()->{
+                defaultExecutor.run(input);
+            });
         });
     }
 }
