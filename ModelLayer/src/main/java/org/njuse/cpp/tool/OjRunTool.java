@@ -7,6 +7,7 @@ import com.alibaba.fastjson.TypeReference;
 import okhttp3.*;
 import org.apache.log4j.Logger;
 import org.njuse.cpp.bo.QuestionBO;
+import org.njuse.cpp.bo.TestcaseBO;
 import org.njuse.cpp.tool.enums.OjEnum;
 import org.njuse.cpp.util.HttpUtil;
 
@@ -70,10 +71,9 @@ public class OjRunTool extends BaseTool{
 
     @Override
     public Map<String, Object> run(Map<String, Object> args) {
-        QuestionBO questionBO= (QuestionBO) args.get("question");
+        TestcaseBO testcaseBO= (TestcaseBO) args.get("testcase");
         String code= (String) args.get("code");
-
-        OjEnum ojRes=runAndCheck(code,questionBO.getTestCase(),questionBO.getAnswer());
+        OjEnum ojRes=runAndCheck(code,testcaseBO.getInput(), testcaseBO.getOutput());
 
         logger.debug("ojRes:"+ojRes.name());
         Map<String,Object> resMap=new HashMap<>();

@@ -4,6 +4,6 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://172.29.4.19:3306/model_table
+    url: jdbc:mysql://172.29.4.19:3306/model_table?useSSL=false&useUnicode=true&characterEncoding=utf-8&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&autoReconnect=true&failOverReadOnly=false&maxReconnects=10
     username: root
     password: zt904
