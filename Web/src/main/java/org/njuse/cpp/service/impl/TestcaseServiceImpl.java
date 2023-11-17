@@ -41,6 +41,7 @@ public class TestcaseServiceImpl implements TestcaseService {
         List<TestcasePO> testcasePOList = testcaseConverter.dtoList2poList(questionId, testcases);
         testcaseMapper.batchInsertTestcases(questionId,testcasePOList);
         QuestionPO questionPO = questionMapper.getQuestionById(questionId);
+        questionPO.setQuestionId(questionId);
         return QuestionConverter.po2bo(questionPO);
     }
 

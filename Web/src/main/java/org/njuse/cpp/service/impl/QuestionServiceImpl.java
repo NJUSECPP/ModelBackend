@@ -78,7 +78,7 @@ public class QuestionServiceImpl implements QuestionService {
         // 更新 QuestionPO 的属性
         questionPO.setName(name);
         questionPO.setDescription(description);
-
+        questionPO.setQuestionId(questionId);
         // 更新数据库中的记录
         questionMapper.updateQuestion(questionPO);
 
