@@ -46,15 +46,11 @@ public class TestcaseServiceImpl implements TestcaseService {
 
     @Override
     public Long batchDeleteTestcases(Integer[] testcaseIds) {
-        TestcasePO testcasePO = testcaseMapper.getTestcaseById(testcaseIds[0].longValue());
+        Long firstTestcaseId = testcaseIds[0].longValue();
+        Long questionId = testcaseMapper.getQuestionIdByTestcaseId(firstTestcaseId);
         testcaseMapper.batchDeleteTestcases(testcaseIds);
-        if (testcasePO != null && testcasePO.getQuestionid() != null) {
-            Long questionId = testcasePO.getQuestionid();
-            return  questionId;
-        } else {
-            return null; // 没有测试用例被删除，返回null或根据实际情况修改
-        }
 
+        return questionId;
     }
 
 }
