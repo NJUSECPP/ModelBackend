@@ -7,6 +7,7 @@ import com.alibaba.fastjson.TypeReference;
 import okhttp3.*;
 import org.apache.log4j.Logger;
 import org.njuse.cpp.bo.QuestionBO;
+import org.njuse.cpp.bo.TestResultBO;
 import org.njuse.cpp.bo.TestcaseBO;
 import org.njuse.cpp.tool.enums.OjEnum;
 import org.njuse.cpp.util.HttpUtil;
@@ -14,6 +15,7 @@ import org.njuse.cpp.util.HttpUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -36,11 +38,11 @@ public class OjRunTool extends BaseTool{
     }};
 
 
-    private static OjEnum runAndCheck(String code, String testCase, String answer){
+    private static OjEnum runAndCheck(String code, List<TestcaseBO> testcaseBOS){
         JSONObject json=new JSONObject();
 
         json.put("code","#include <bits/stdc++.h>\n"+code);
-        json.put("input",testCase);
+        json.put("testCases",testcaseBOS);
         String res;
         try {
             res= HttpUtil.doPostRequest(client,"http://172.29.4.19:8082/modelRacetrack/run", json.toJSONString());
@@ -58,8 +60,8 @@ public class OjRunTool extends BaseTool{
             return ERROR_CODE_MAP.get(status);
         }
         else{
-            String output= (String) responseMap.get("output");
-            if(output.equals(answer)){
+            TestResultBO testResultBO=(TestResultBO) responseMap.get("test_result");
+            if(testResultBO.getStatus()==0){
                 return OjEnum.PASS;
             }
             else{
@@ -71,9 +73,9 @@ public class OjRunTool extends BaseTool{
 
     @Override
     public Map<String, Object> run(Map<String, Object> args) {
-        TestcaseBO testcaseBO= (TestcaseBO) args.get("testcase");
+        List<TestcaseBO> testcaseBO= (List<TestcaseBO>) args.get("testcases");
         String code= (String) args.get("code");
-        OjEnum ojRes=runAndCheck(code,testcaseBO.getInput(), testcaseBO.getOutput());
+        OjEnum ojRes=runAndCheck(code,testcaseBO);
 
         logger.debug("ojRes:"+ojRes.name());
         Map<String,Object> resMap=new HashMap<>();

@@ -15,14 +15,14 @@ public class TestcaseConverter {
         TestcaseBO testcaseBO=new TestcaseBO();
         testcaseBO.setInput(testcasepo.getInput());
         testcaseBO.setOutput(testcasepo.getOutput());
-        testcaseBO.setTestid(testcasepo.getTestid());
-        testcaseBO.setQuestionid(testcasepo.getQuestionid());
+        testcaseBO.setTestId(testcasepo.getTestId());
+        testcaseBO.setQuestionId(testcasepo.getQuestionId());
         testcaseBO.setTip(testcasepo.getTip());
         return testcaseBO;
     }
     public static TestcaseItemDTO poToItemDTO(TestcasePO po) {
         TestcaseItemDTO dto = new TestcaseItemDTO();
-        dto.setId(po.getTestid());
+        dto.setId(po.getTestId());
         dto.setInput(po.getInput());
         dto.setOutput(po.getOutput());
         dto.setTip(po.getTip());
@@ -40,7 +40,7 @@ public class TestcaseConverter {
         List<TestcasePO> testcasePOList = new ArrayList<>();
         for (TestcaseRequestDTO testcaseDTO : testcaseDTOList) {
             TestcasePO testcasePO = new TestcasePO();
-            testcasePO.setQuestionid(questionId);
+            testcasePO.setQuestionId(questionId);
             testcasePO.setInput(testcaseDTO.getInput());
             testcasePO.setOutput(testcaseDTO.getOutput());
             testcasePO.setTip(testcaseDTO.getTip());

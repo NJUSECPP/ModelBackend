@@ -2,27 +2,31 @@ package org.njuse.cpp.controller;
 
 
 import org.njuse.cpp.bo.QuestionBO;
+import org.njuse.cpp.bo.TestcaseBO;
+import org.njuse.cpp.dao.converter.TestcaseConverter;
+import org.njuse.cpp.dao.po.TestcasePO;
 import org.njuse.cpp.executor.DefaultExecutor;
 import org.njuse.cpp.memory.BaseChatMessageHistory;
 import org.njuse.cpp.memory.BaseMessage;
-import org.njuse.cpp.memory.SystemMessage;
 import org.njuse.cpp.request.GenerateRequest;
 import org.njuse.cpp.service.QuestionService;
 import org.njuse.cpp.service.SqlMemory;
+import org.njuse.cpp.service.TestcaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/run")
@@ -33,6 +37,9 @@ public class ChatController {
 
     @Autowired
     QuestionService questionService;
+
+    @Autowired
+    TestcaseService testcaseService;
 
     @PostMapping(value="/runWithOJ",produces = "text/event-stream")
     public SseEmitter runWithOJ(@RequestBody GenerateRequest request, HttpServletResponse response) {
@@ -101,7 +108,11 @@ public class ChatController {
             Map<String, Object> input = new HashMap<>();
             input.put("emit", emit);
             QuestionBO questionBO=questionService.getQuestionById(questionId);
+            List<TestcasePO> testcasePOList=testcaseService.getAllTestcases(-1,0,questionId);
+            List<TestcaseBO> testcaseBOS=testcasePOList.stream().map(TestcaseConverter::po2bo).collect(Collectors.toList());
+
             input.put("question", questionBO);
+            input.put("testcases",testcaseBOS);
             input.put("modelName",modelName);
             input.put("memory", memory);
 

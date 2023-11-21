@@ -6,8 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Data
 public class TestcasePO {
-    private Long testid;
-    private Long questionid;
+    private Long testId;
+    private Long questionId;
     private String input;
     private String output;
     private String tip;

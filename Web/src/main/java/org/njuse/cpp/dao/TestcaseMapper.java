@@ -8,29 +8,29 @@ import java.util.List;
 public interface TestcaseMapper {
 
     @Insert("INSERT INTO testcase (test_id, question_id, input, output, tip) " +
-            "VALUES (#{testid}, #{questionid}, #{input}, #{output}, #{tip})")
+            "VALUES (#{testId}, #{questionId}, #{input}, #{output}, #{tip})")
     void insertTestcase(TestcasePO testcase);
 
     // 根据ID查询测试用例
-    @Select("SELECT * FROM testcase WHERE test_id = #{testid}")
-    TestcasePO getTestcaseById(Long testid);
+    @Select("SELECT * FROM testcase WHERE test_id = #{testId}")
+    TestcasePO getTestcaseById(Long testId);
 
     //根据testid获取questionid
-    @Select("SELECT question_id FROM testcase WHERE test_id = #{testid}")
-    Long getQuestionIdByTestcaseId(Long testid);
+    @Select("SELECT question_id FROM testcase WHERE test_id = #{testId}")
+    Long getQuestionIdByTestcaseId(Long testId);
 
     // 获取所有测试用例
     @Select("SELECT * FROM testcase")
     List<TestcasePO> getAllTestcases();
 
     // 更新测试用例
-    @Update("UPDATE testcase SET question_id = #{questionid}, input = #{input}, output = #{output}, tip = #{tip} " +
-            "WHERE test_id = #{testid}")
+    @Update("UPDATE testcase SET question_id = #{questionId}, input = #{input}, output = #{output}, tip = #{tip} " +
+            "WHERE test_id = #{testId}")
     void updateTestcase(TestcasePO testcase);
 
     // 删除测试用例
-    @Delete("DELETE FROM testcase WHERE test_id = #{testid}")
-    void deleteTestcase(Long testid);
+    @Delete("DELETE FROM testcase WHERE test_id = #{testId}")
+    void deleteTestcase(Long testId);
 
     //分页查询所有用例
     @Select({
@@ -59,14 +59,14 @@ public interface TestcaseMapper {
             "</foreach>",
             "</script>"
     })
-    @Options(useGeneratedKeys = true, keyProperty = "testcases.testid",keyColumn = "test_id")
+    @Options(useGeneratedKeys = true, keyProperty = "testcases.testId",keyColumn = "test_id")
     void batchInsertTestcases(@Param("questionId") Long questionId, @Param("testcases") List<TestcasePO> testcases);
 
     @Delete({//根据用例id删除用例
             "<script>",
             "DELETE FROM testcase WHERE test_id IN",
-            "<foreach collection='testcaseIds' item='testid' open='(' separator=',' close=')'>",
-            "#{testid}",
+            "<foreach collection='testcaseIds' item='testId' open='(' separator=',' close=')'>",
+            "#{testId}",
             "</foreach>",
             "</script>"
     })

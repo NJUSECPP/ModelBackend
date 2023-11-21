@@ -1,6 +1,7 @@
 package org.njuse.cpp.executor;
 
 import org.njuse.cpp.bo.QuestionBO;
+import org.njuse.cpp.bo.TestcaseBO;
 import org.njuse.cpp.llm.BaseLlm;
 import org.njuse.cpp.llm.StarCoderLlm;
 import org.njuse.cpp.memory.BaseChatMessageHistory;
@@ -17,6 +18,7 @@ import reactor.core.publisher.FluxSink;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DefaultExecutor extends BaseExecutor{
@@ -37,6 +39,9 @@ public class DefaultExecutor extends BaseExecutor{
     public void run(Map<String, Object> args) {
         BaseChatMessageHistory memory= (BaseChatMessageHistory) args.get("memory");
         QuestionBO questionBO= (QuestionBO) args.get("question");
+        List<TestcaseBO> testcaseBOS=(List<TestcaseBO>) args.get("testcases");
+
+
         String modelName=(String)args.get("modelName");
         FluxSink<BaseMessage> emit=(FluxSink) args.get("emit");
 
@@ -54,6 +59,7 @@ public class DefaultExecutor extends BaseExecutor{
             OjRunTool ojRunTool=new OjRunTool();
             Map<String,Object> input=new HashMap<>();
             input.put("question",questionBO);
+            input.put("testcases",testcaseBOS);
             input.put("code",llmResponse.get("code"));
             BaseMessage message= (BaseMessage) llmResponse.get("msg");
             emit.next(message);
