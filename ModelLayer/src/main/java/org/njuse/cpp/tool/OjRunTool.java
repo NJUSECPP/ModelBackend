@@ -52,15 +52,14 @@ public class OjRunTool extends BaseTool{
             throw new RuntimeException(e);
         }
         Map<String,Object> resMap= JSON.parseObject(res,new TypeReference<Map<String,Object>>(){});
-        String response= (String) resMap.get("object");
-        Map<String,Object> responseMap= JSON.parseObject(response,new TypeReference<Map<String,Object>>(){});
 
-        Integer status= (Integer) responseMap.get("code_result_status");
+        Integer status= (Integer) resMap.get("code_result_status");
         if(ERROR_CODE_MAP.containsKey(status)){
             return ERROR_CODE_MAP.get(status);
         }
         else{
-            TestResultBO testResultBO=(TestResultBO) responseMap.get("test_result");
+            JSONObject testResultJson=(JSONObject) resMap.get("test_result");
+            TestResultBO testResultBO=JSON.parseObject(testResultJson.toJSONString(),TestResultBO.class);
             if(testResultBO.getStatus()==0){
                 return OjEnum.PASS;
             }
