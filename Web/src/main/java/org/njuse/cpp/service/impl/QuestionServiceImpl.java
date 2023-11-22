@@ -30,11 +30,8 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public QuestionBO getQuestionById(Integer questionId){
-        Long id=Long.valueOf(questionId);
-
-
-        return QuestionConverter.po2bo(questionMapper.getQuestionById(id));
+    public QuestionBO getQuestionById(Long questionId){
+        return QuestionConverter.po2bo(questionMapper.getQuestionById(questionId));
     }
 
     @Override

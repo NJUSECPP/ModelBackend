@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public interface QuestionService {
-    QuestionBO getQuestionById(Integer questionId);
+    QuestionBO getQuestionById(Long questionId);
 
 
     List<QuestionBO> getQuestionsByPage(Integer pageSize, Integer pageNo, String keyword);

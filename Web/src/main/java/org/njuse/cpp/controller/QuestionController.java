@@ -28,7 +28,7 @@ public class QuestionController {
     TestcaseService testcaseService;
 
     @GetMapping("{/id}")
-    public QuestionBO getQuestionById(@PathVariable("id") Integer id) {
+    public QuestionBO getQuestionById(@PathVariable("id") Long id) {
         return questionService.getQuestionById(id);
     }
 
@@ -53,7 +53,7 @@ public class QuestionController {
     @PostMapping("/update")
     public QuestionBO updateQuestion(
             @RequestBody Map<String, String> requestBody) {
-        String id = requestBody.get("id");
+        String id = requestBody.get("questionId");
         String name = requestBody.get("name");
         String description = requestBody.get("description");
         return questionService.updateQuestion(id, name, description);
@@ -63,21 +63,22 @@ public class QuestionController {
     public TestcaseResponseDTO getAllTestcases(
             @RequestParam("pageSize") Integer pageSize,
             @RequestParam("pageNo") Integer pageNo,
-            @RequestParam("questionId") Integer questionId) {
+            @RequestParam("questionId") Long questionId) {
 
         // 调用 service 方法获取数据
         List<TestcasePO> testcaseList = testcaseService.getAllTestcases(pageSize, pageNo, questionId);
+        int total = testcaseService.countTestcases(questionId);
 
         // 构造 TestcaseResponseDTO 并返回
-        return TestcaseResponseDTO.fromListAndTotal(testcaseList, testcaseList.size());
+        return TestcaseResponseDTO.fromListAndTotal(testcaseList, total);
     }
 
     @PostMapping("/testcase/batchInsert")
     public QuestionBO batchAddTestcases(
             @RequestBody BatchInsertRequestDTO requestDTO) {
-        Integer questionId = requestDTO.getQuestionId();
+        Long questionId = requestDTO.getQuestionId();
         List<TestcaseRequestDTO> testcases = requestDTO.getTestcases();
-        QuestionBO questionBO = testcaseService.batchAddTestcases(Long.valueOf(questionId), testcases);
+        QuestionBO questionBO = testcaseService.batchAddTestcases(questionId, testcases);
         return questionBO;
     }
 
@@ -90,17 +91,17 @@ public class QuestionController {
         Long questionId = testcaseService.batchDeleteTestcases(testcaseIds);
 
         // 根据 questionId 获取对应的 QuestionBO
-        QuestionBO questionBO = getQuestionById(questionId.intValue());
+        QuestionBO questionBO = getQuestionById(questionId);
 
         // 返回 QuestionBO
         return questionBO;
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<Object> deleteQuestionAndTestcases(@RequestBody Map<String, Integer> payload) {
+    public ResponseEntity<Object> deleteQuestionAndTestcases(@RequestBody Map<String, Long> payload) {
         // 调用 service 方法删除题目及其所有用例
-        Integer questionId = payload.get("questionId");
-        questionService.deleteQuestionAndTestcases(questionId.longValue());
+        Long questionId = payload.get("questionId");
+        questionService.deleteQuestionAndTestcases(questionId);
 
         // 返回成功的响应
         return new ResponseEntity<>(HttpStatus.OK);

@@ -11,7 +11,9 @@ import java.util.List;
 
 @Service
 public interface TestcaseService {
-    List<TestcasePO> getAllTestcases(Integer pageSize, Integer pageNo, Integer questionId);
+    List<TestcasePO> getAllTestcases(Integer pageSize, Integer pageNo, Long questionId);
+
+    int countTestcases(Long questionId);
 
     QuestionBO batchAddTestcases(Long questionId, List<TestcaseRequestDTO> testcases);
 

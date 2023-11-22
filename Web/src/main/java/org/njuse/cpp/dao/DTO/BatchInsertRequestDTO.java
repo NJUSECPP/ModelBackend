@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class BatchInsertRequestDTO {
-    private Integer questionId;
+    private Long questionId;
     private List<TestcaseRequestDTO> testcases;
 }

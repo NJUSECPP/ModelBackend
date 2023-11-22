@@ -23,7 +23,7 @@ public class TestcaseServiceImpl implements TestcaseService {
     @Autowired
     QuestionMapper questionMapper;
     @Override
-    public List<TestcasePO> getAllTestcases(Integer pageSize, Integer pageNo, Integer questionId) {
+    public List<TestcasePO> getAllTestcases(Integer pageSize, Integer pageNo, Long questionId) {
 
         if (pageSize == null || pageSize <= 0) {
             pageSize = Integer.MAX_VALUE;
@@ -33,7 +33,12 @@ public class TestcaseServiceImpl implements TestcaseService {
         }
         int offset = (pageNo - 1) * pageSize;
 
-        return testcaseMapper.getTestcasesByQuestionIdAndPage(pageSize, offset, questionId.longValue());
+        return testcaseMapper.getTestcasesByQuestionIdAndPage(pageSize, offset, questionId);
+    }
+
+    @Override
+    public int countTestcases(Long questionId) {
+        return testcaseMapper.getTotalCountByQuestionId(questionId);
     }
 
     @Override

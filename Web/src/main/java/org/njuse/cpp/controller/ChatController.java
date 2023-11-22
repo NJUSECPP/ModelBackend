@@ -101,7 +101,7 @@ public class ChatController {
         return emitter;
     }
 
-    private Flux<BaseMessage> send(BaseChatMessageHistory memory, Integer questionId,String modelName) {
+    private Flux<BaseMessage> send(BaseChatMessageHistory memory, Long questionId,String modelName) {
         DefaultExecutor defaultExecutor = new DefaultExecutor();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         return Flux.create(emit -> {
