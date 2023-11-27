@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Component
-@Scope("prototype")
+
 public class SqlMemory extends BaseChatMessageHistory {
     private String sessionId;
 
@@ -25,13 +24,13 @@ public class SqlMemory extends BaseChatMessageHistory {
 
     private Integer userId;
 
-    @Autowired
     ChatSessionMapper chatSessionMapper;
 
-    public void init(String sessionId,String userName,Integer userId){
+    public SqlMemory(String sessionId,String userName,Integer userId, ChatSessionMapper chatSessionMapper){
         this.sessionId=sessionId;
         this.userName=userName;
         this.userId=userId;
+        this.chatSessionMapper = chatSessionMapper;
     }
 
     @Override

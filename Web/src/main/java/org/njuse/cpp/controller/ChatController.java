@@ -3,6 +3,7 @@ package org.njuse.cpp.controller;
 
 import org.njuse.cpp.bo.QuestionBO;
 import org.njuse.cpp.bo.TestcaseBO;
+import org.njuse.cpp.dao.ChatSessionMapper;
 import org.njuse.cpp.dao.converter.TestcaseConverter;
 import org.njuse.cpp.dao.po.TestcasePO;
 import org.njuse.cpp.executor.DefaultExecutor;
@@ -33,13 +34,13 @@ import java.util.stream.Collectors;
 public class ChatController {
 
     @Autowired
-    SqlMemory sqlMemory;
-
-    @Autowired
     QuestionService questionService;
 
     @Autowired
     TestcaseService testcaseService;
+
+    @Autowired
+    ChatSessionMapper chatSessionMapper;
 
     @PostMapping(value="/runWithOJ",produces = "text/event-stream")
     public SseEmitter runWithOJ(@RequestBody GenerateRequest request, HttpServletResponse response) {
@@ -49,7 +50,8 @@ public class ChatController {
         response.setCharacterEncoding("UTF-8");
         //TODO::前置校验
 
-        sqlMemory.init(request.getSessionId(), request.getUserName(), request.getUserId());
+        SqlMemory sqlMemory = new SqlMemory(request.getSessionId(), request.getUserName(),
+                request.getUserId(), chatSessionMapper);
         SseEmitter emitter = new SseEmitter(-1L);
         AtomicInteger index = new AtomicInteger(1);
 
