@@ -3,12 +3,14 @@ package org.njuse.cpp.executor;
 import org.njuse.cpp.bo.QuestionBO;
 import org.njuse.cpp.bo.TestcaseBO;
 import org.njuse.cpp.llm.BaseLlm;
+import org.njuse.cpp.llm.Llama7bLlm;
 import org.njuse.cpp.llm.StarCoderLlm;
 import org.njuse.cpp.memory.BaseChatMessageHistory;
 import org.njuse.cpp.memory.BaseMessage;
 import org.njuse.cpp.memory.HumanMessage;
 import org.njuse.cpp.memory.SystemMessage;
 import org.njuse.cpp.prompt.BasePromptTemplate;
+import org.njuse.cpp.prompt.Llama7bPromptTemplate;
 import org.njuse.cpp.prompt.StarCoderPromptTemplate;
 import org.njuse.cpp.tool.BaseTool;
 import org.njuse.cpp.tool.OjRunTool;
@@ -23,11 +25,13 @@ import java.util.Map;
 
 public class DefaultExecutor extends BaseExecutor{
     private static final Map<String, BaseLlm> MODEL_POOL=new HashMap<String,BaseLlm>(){{
+        put("Llama7b",new Llama7bLlm());
         put("StarCoder",new StarCoderLlm());
     }};
 
     private static final Map<String, BasePromptTemplate> PROMPT_TEMPLATE_MAP=new HashMap<String,BasePromptTemplate>()
     {{
+        put("Llama7b",new Llama7bPromptTemplate());
         put("StarCoder",new StarCoderPromptTemplate());
     }};
 
