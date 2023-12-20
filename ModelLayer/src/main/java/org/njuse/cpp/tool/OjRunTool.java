@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.njuse.cpp.bo.QuestionBO;
 import org.njuse.cpp.bo.TestResultBO;
 import org.njuse.cpp.bo.TestcaseBO;
+import org.njuse.cpp.bo.entity.TestResult;
 import org.njuse.cpp.tool.enums.OjEnum;
 import org.njuse.cpp.util.HttpUtil;
 
@@ -38,7 +39,7 @@ public class OjRunTool extends BaseTool{
     }};
 
 
-    private static OjEnum runAndCheck(String code, List<TestcaseBO> testcaseBOS){
+    private static Map<String,Object> runAndCheck(String code, List<TestcaseBO> testcaseBOS){
         JSONObject json=new JSONObject();
 
         json.put("code","#include <bits/stdc++.h>\n"+code);
@@ -52,21 +53,38 @@ public class OjRunTool extends BaseTool{
             throw new RuntimeException(e);
         }
         Map<String,Object> resMap= JSON.parseObject(res,new TypeReference<Map<String,Object>>(){});
+        Map<String,Object> returnMap=new HashMap<>();
 
         Integer status= (Integer) resMap.get("code_result_status");
         if(ERROR_CODE_MAP.containsKey(status)){
-            return ERROR_CODE_MAP.get(status);
+            returnMap.put("OjRes",ERROR_CODE_MAP.get(status));
+            //编译错误需要带上编译报错信息
+            if(status.equals(-1)){
+                returnMap.put("CompileErrorDetail", resMap.get("compile_err_detail"));
+            }
         }
         else{
             JSONObject testResultJson=(JSONObject) resMap.get("test_result");
             TestResultBO testResultBO=JSON.parseObject(testResultJson.toJSONString(),TestResultBO.class);
             if(testResultBO.getStatus()==0){
-                return OjEnum.PASS;
+                returnMap.put("OjRes",OjEnum.PASS);
             }
             else{
-                return OjEnum.INCORRECT_ANSWER;
+                returnMap.put("OjRes",OjEnum.INCORRECT_ANSWER);
+                returnMap.put("ErrorCaseTip",getOneErrorCaseTip(testResultBO));
             }
         }
+        return returnMap;
+    }
+
+    private static String getOneErrorCaseTip(TestResultBO testResultBO){
+        List<TestResult> testResults=testResultBO.getTestResultList();
+        for(TestResult result:testResults){
+            if(result.getResult()==-1){
+                return result.getTip();
+            }
+        }
+        return "";
     }
 
 
@@ -74,11 +92,9 @@ public class OjRunTool extends BaseTool{
     public Map<String, Object> run(Map<String, Object> args) {
         List<TestcaseBO> testcaseBO= (List<TestcaseBO>) args.get("testcases");
         String code= (String) args.get("code");
-        OjEnum ojRes=runAndCheck(code,testcaseBO);
 
-        logger.debug("ojRes:"+ojRes.name());
-        Map<String,Object> resMap=new HashMap<>();
-        resMap.put("OjRes",ojRes);
+        Map<String,Object> resMap=runAndCheck(code,testcaseBO);
+        logger.debug("oj res map:"+resMap);
         return resMap;
     }
 }

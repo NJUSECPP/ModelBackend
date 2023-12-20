@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class LitgptLlm extends BaseLlm{
-    private static final Logger logger=Logger.getLogger(LitgptLlm.class);
+public class Gpt4Llm extends BaseLlm{
+    private static final Logger logger=Logger.getLogger(Gpt4Llm.class);
     private static final OkHttpClient client = new OkHttpClient().newBuilder()
             .connectTimeout(180, TimeUnit.SECONDS)
             .writeTimeout(180, TimeUnit.SECONDS)
@@ -28,21 +28,19 @@ public class LitgptLlm extends BaseLlm{
 
         String res;
         try {
-            res= HttpUtil.doPostRequest(client,"http://10.58.0.2:7904/output",json.toJSONString());
-            logger.debug("LitgptLlm res:"+res);
+            res= HttpUtil.doPostRequest(client,"http://172.19.185.1:7904/output",json.toJSONString());
+            logger.debug("Gpt4 res:"+res);
         } catch (IOException e) {
             logger.error(e.getMessage());
             throw new RuntimeException(e);
         }
-
-        //调用模型返回的Map
         Map<String,Object> responseMap= JSON.parseObject(res,new TypeReference<Map<String,Object>>(){});
         String llmResponse= (String) responseMap.get("text");
         Integer startIndex=llmResponse.indexOf("#");
         Integer endIndex=llmResponse.lastIndexOf("}");
 
         String codeGenerate=llmResponse.substring(startIndex,endIndex+1);
-        logger.debug("LitgptLlm codeGenerate:"+codeGenerate);
+        logger.debug("Gpt4 codeGenerate:"+codeGenerate);
 
         Map<String,Object> resMap=new HashMap<>();
         resMap.put("code",codeGenerate);
